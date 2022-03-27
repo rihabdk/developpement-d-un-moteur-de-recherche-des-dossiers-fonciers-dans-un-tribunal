@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Map from "./map";
-import "./App.css";
+import Map from "./components/Admin/map";
+import "./index.css";
+import App from "./App";
 
 ReactDOM.render(
-  <Map position={[36.81897, 10.16579]} zoom={14} />,
+  <App/>,
   document.getElementById("root")
 );
