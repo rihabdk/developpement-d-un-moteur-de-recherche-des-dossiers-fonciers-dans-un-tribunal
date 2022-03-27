@@ -24,15 +24,3 @@ mongoose.connect(process.env.DB_CONNECTION,
  console.log('connected to db')
 );
 
-//how to listn to server
-app.listen(3000);
-
-
-
-/*fetch('http://localhost:3000/posts')
-.then(result => {
-    return result.json();
-    })
-    .then(data => {
-      console.log(data);
-    }) */
