@@ -6,7 +6,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const db = 'mongodb://127.0.0.1:27017/sig';
-// app.use('/api/uploads', express.static(process.cwd() + '/uploads'));
+
 
 mongoose
   .connect(db, {})
