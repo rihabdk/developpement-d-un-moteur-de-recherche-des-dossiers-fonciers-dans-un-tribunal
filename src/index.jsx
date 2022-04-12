@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Map from "./components/Admin/map";
+//import MapComponent from "./components/Admin/map";
 import "./index.css";
 import App from "./App";
 

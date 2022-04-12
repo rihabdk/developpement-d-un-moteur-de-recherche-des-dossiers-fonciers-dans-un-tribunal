@@ -9,7 +9,7 @@ import Login from './components/Admin/login';
 import Register from './components/Admin/register';
 //import Dash from './components/Admin/dashboard';
 //import Landing from './components/Admin/landing';
-import MapComponent from './components/Admin/map';
+import Map from './components/Admin/map';
 
 function App() {
   return (<Router>
@@ -28,7 +28,7 @@ function App() {
         
             
               <li className="nav-item">
-                <Link className="nav-link" to={"/map"}>Map</Link>
+                <Link className="nav-link" to={"/Map"}>Map</Link>
         
               </li>
               </ul>
@@ -40,7 +40,7 @@ function App() {
               <Route exact path='/' element={<Login/>} />
             <Route path="/login" element={<Login/>} />
       <Route path="/register" element={<Register/>} />
-      <Route path="/map" element={<MapComponent/>} />
+      <Route path="/map" element={<Map/>} />
 
       </Routes>
    

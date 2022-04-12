@@ -1,137 +1,78 @@
-import React ,{useState}from "react";
-import { MapContainer, TileLayer, FeatureGroup,GeoJSON , Marker,Popup} from "react-leaflet";
-import { OpenStreetMapProvider } from "react-leaflet-geosearch";
-import SearchControl from "./searchControl";
-import { DraftControl } from "react-leaflet-draft";
-import scavengerHuntGeoJson from './scavenger-hunt.json';
-import { marker } from "leaflet";
+import React from "react";
+import { Map, TileLayer, LayersControl} from "react-leaflet";
+import "./map.css"
+import { ShapeFile } from '../../../node_modules/react-leaflet-shapefile-v2/lib/index'
+const { BaseLayer, Overlay } = LayersControl;
 
 
-const position = [36.81897, 10.16579]
 class MapComponent extends React.Component {
-  render() {
-   // const { position, zoom } = this.props;
+  
+   
+  state = {
+    geodata: null,
+    increment: 0
+  }
 
-    const prov = OpenStreetMapProvider();
+  handleFile(e) {
+    var reader = new FileReader();
+    var file = e.target.files[0];
+    reader.readAsArrayBuffer(file);
+    reader.onload = function(buffer) {
+      this.setState({ geodata: buffer.target.result });
+    }.bind(this)
+  }
+  
+  onEachFeature(feature, layer) {
+    if (feature.properties) {
+      layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+        return k + ": " + feature.properties[k];
+      }).join("<br />"), {
+        maxHeight: 200
+      });
+    }
+  }
+  
+  style() {
+    return ({
+      weight: 2,
+      opacity: 1,
+      color: "blue",
+      dashArray: "3",
+      fillOpacity: 0.7
+    });
+  }
+
+  render() {
+    let ShapeLayers = null;
+    if (this.state.geodata !== null) {
+      ShapeLayers = (
+      <Overlay checked name='Feature group'>
+          <ShapeFile data={this.state.geodata} style={this.style} onEachFeature={this.onEachFeature}/>
+      </Overlay>);
+    }
 
 
     return (
-      <MapContainer center={position} zoom={14}>
+      <div>
+
+      <div >
+          <input type="file" onChange={this.handleFile.bind(this)} className="inputfile"/>
+        </div>
+      <Map  id="mapId" center={[36.81897, 10.16579]} zoom={14} zoomControl={true}>
+      <LayersControl position='topright'>
+            <BaseLayer checked name='OpenStreetMap.Mapnik'>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
+         </BaseLayer>
+            {ShapeLayers}
+          </LayersControl>
        
 
-        <SearchControl 
-          provider={prov}
-          showMarker={true}
-          showPopup={false}
-          popupFormat={({ query, result }) => result.label}
-          maxMarkers={3}
-          retainZoomLevel={false}
-          animateZoom={true}
-          autoClose={false}
-          searchLabel={"Enter address, please"}
-          keepResult={true}
-        />
-           <FeatureGroup>
-           <DraftControl
-         draw={{
-          polyline: {
-              shapeOptions: { color: "red" },
-              allowIntersection: false,
-              showLength: true,
+      </Map>
+      </div>
 
-              metric: false,
-              feet: false
-          },
-          polygon: {
-              allowIntersection: false,
-              shapeOptions: { color: "red" },
-              edit: false,
-              showLength: true,
-              metric: false,
-              feet: false,
-              showArea: true
-          },
-          rectangle: {
-              shapeOptions: { color: "red" },
-              showLength: true,
-              metric: false,
-              feet: false,
-              showArea: true
-          },
-        
-          circle: {
-              shapeOptions: { color: "red" },
-              showLength: true,
-              metric: false,
-              feet: false,
-              showArea: true
-          },
-         
-          marker: { zIndexOffset: "999" }
-      }}
-  edit={{
-      edit: true
-  }}
-  limitLayers={2}
-/>
-<DraftControl 
-         draw={{
-          polyline: {
-              shapeOptions: { color: "bleu" },
-              allowIntersection: false,
-              showLength: true,
-
-              metric: false,
-              feet: false
-          },
-          polygon: {
-              allowIntersection: false,
-              shapeOptions: { color: "blue" },
-              edit: false,
-              showLength: true,
-              metric: false,
-              feet: false,
-              showArea: true
-          },
-          rectangle: {
-              shapeOptions: { color: "blue" },
-              showLength: true,
-              metric: false,
-              feet: false,
-              showArea: true
-          },
-        
-          circle: {
-              shapeOptions: { color: "blue" },
-              showLength: true,
-              metric: false,
-              feet: false,
-              showArea: true
-          },
-         
-          marker: { zIndexOffset: "999" }
-      }}
-  edit={{
-      edit: true
-  }}
-  limitLayers={2}
-/>
-
-            </FeatureGroup>
-            <GeoJSON data={scavengerHuntGeoJson} />
-            <Marker position={position}>
-        <Popup >
-          A pretty CSS3 popup. <br /> 
-          <input type="file"
-       id="avatar" name="avatar"
-       accept="image/png, image/jpeg"></input>
-        </Popup>
-      </Marker>
-      </MapContainer>
     );
   }
 }
