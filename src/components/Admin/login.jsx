@@ -7,8 +7,6 @@ import axios from "axios";
 import { Field, useFormik } from "formik";
 import { FieldContainer,FormError, FieldError , FormSuccess} from "./commun";
 
-
-//import './login.css';
 import { Alert } from "bootstrap";
 const validationSchema = yup.object({
   Emailadress: yup.string(),
