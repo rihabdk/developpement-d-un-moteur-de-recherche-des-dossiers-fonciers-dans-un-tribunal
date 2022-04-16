@@ -12,6 +12,9 @@ app.use(bodyParser.json());
 const usersRoute = require('./routes/users');
 app.use('/users', usersRoute);
 
+const mapsRoute = require('./routes/maps');
+app.use('/maps', mapsRoute);
+
 //routes
 app.get('/',(req, res) => {
     res.send('we are on home user');
