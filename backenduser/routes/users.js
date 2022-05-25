@@ -15,8 +15,7 @@ const {registrevalidation , loginvalidation} = require('./validation');
       .min(6)
       .required(),
       lastname: Joi.string()
-      .min(6)
-      .required(),
+      .min(6).required(),
       Emailaddress: Joi.string()
       .min(6)
       .required()
@@ -24,9 +23,10 @@ const {registrevalidation , loginvalidation} = require('./validation');
       Password: Joi.string()
       .min(8)
       .required(),
+      poste: Joi.string().required()
   });
 //get 
-router.get('/', async (req, res) => {
+router.get('/get', async (req, res) => {
    // res.send('we are on posts');
    try{
     const users = await User.find();
@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
 });
 //submit a post
 router.post("/register", async (req, res) => {
-    const { firstname,lastname, Emailaddress, password } = req.body;
+    const { firstname,lastname, Emailaddress, Password, poste } = req.body;
   
    // const alreadyExistsUser = await User.findOne({Emailaddress: req.body.Emailaddress}).catch(
      // (err) => {
@@ -51,7 +51,7 @@ router.post("/register", async (req, res) => {
      // return res.status(409).json({ message: "User with email already exists!" });
     //}
   
-    const newUser = new User({ firstname,lastname, Emailaddress, password });
+    const newUser = new User({ firstname,lastname, Emailaddress, Password, poste});
     const savedUser = await newUser.save().catch((err) => {
       console.log("Error: ", err);
       res.status(500).json({ error: "Cannot register user at the moment!" });
@@ -93,7 +93,8 @@ res.send('Logged in !');
    //delete posts
    router.delete('/:userId', async (req, res) => {
      try{
-     const removedUser = await Post.remove({_id: req.params.userId}) 
+       console.log(req.params.userId)
+     const removedUser = await User.remove({_id: req.params.userId}) 
        res.json(removedUser);
    }catch(err){
        res.json({message: err});
@@ -108,7 +109,7 @@ res.send('Logged in !');
        const updatedUser = await User.updateOne(
            {_id: req.params.userId},
            { $set: { firstname: req.body.firstname, lastname: req.body.lastname , 
-            Emailaddress: req.body.Emailaddress , Password: req.body.Password }}
+            Emailaddress: req.body.Emailaddress , Password: req.body.Password, poste:req.body.poste }}
      
           
   );

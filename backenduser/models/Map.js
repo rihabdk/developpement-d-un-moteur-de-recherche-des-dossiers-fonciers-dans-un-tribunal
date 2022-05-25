@@ -1,14 +1,29 @@
 var GeoJSON = require('mongoose-geojson-schema');
 var mongoose = require('mongoose');
-const { object } = require('@hapi/joi');
+const { object, date } = require('@hapi/joi');
 
 var Mapschema = new mongoose.Schema({
- //   type: String,
+    id_dossier: String,
+    name : String,
+    cinclt: String,
+    email : String,
+    nameadv: String,
+    adress: String,
+    statut: {
+        type: String,
+        enum: ['en cours','traité','non traité'],
+        default: 'traité'
+        
+      },
+   
+    date: {
+        type: Date, 
+        default: Date.now
+      },
 
-    //  coordinates: [[[Number]]]
-    avatar: {
+avatar: {
           type: String
-    }
+    } 
     
 });
 module.exports = mongoose.model('maps', Mapschema);

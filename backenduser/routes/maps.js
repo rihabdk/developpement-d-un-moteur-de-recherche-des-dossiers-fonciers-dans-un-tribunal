@@ -1,12 +1,11 @@
 const express = require('express');
-const User = require('../models/User');
-const { remove } = require('../models/User');
+
 const map = require('../models/Map');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const Map = require('../models/Map');
 const bcrypt = require('bcryptjs');
-const {registrevalidation , loginvalidation} = require('./validation');
+
 const upload = require('../middleware/upload')
 //const Subscriber = require('../models/Post');
 //validation
@@ -31,25 +30,13 @@ router.get('/', async (req, res) => {
   
 });
 
-//submit a post
-//router.post('/ts', async (req, res) => {
-  //  const map = new Map({
-    //    type: req.body.type,
-      //  coordinates: req.body.coordinates
-    //})
-   // try {
-     //   const newMap = await map.save()
-       // res.status(201).json(newMap)
-      //} catch (err) {
-       // res.status(400).json({ message: err.message })
-      //}
-  //});
 
-  //add new file 
   const store = (req, res, next) => {
-    let map = new Map({})
+    let map = new Map(req.body)
       if (req.file){
-        map.avatar = req.file.path
+        const url = req.protocol + "://" + req.get("host");
+        console.log(req.body)
+    map.avatar = url + "/uploads/" + req.file.filename;
       }
       map.save()
       .then(response => {
@@ -67,9 +54,46 @@ router.get('/', async (req, res) => {
 
 
 router.post('/store', upload.single('avatar'), store)
+router.post('/table', async (req, res) => {
+  const { id_dossier,name, cinclt, email, nameadv,adress,statut,date } = req.body;
 
 
 
+  const newFolder = new Map({ id_dossier,name, cinclt, email, nameadv,adress,statut,date});
+  const savedFolder = await newFolder.save().catch((err) => {
+    console.log("Error: ", err);
+    res.status(500).json({ error: "Cannot !" });
+  });
+
+  if (savedFolder) res.json({ message: "enregistré" });
+});
+
+
+router.get('/get', async (req, res) => {
+  // res.send('we are on posts');
+  try{
+   const maps = await Map.find();
+   res.json(maps);
+}catch(err)
+{
+   res.json({ message: err})
+}
+ 
+});
+router.delete('/:MapId', async (req, res) => {
+  try{
+    console.log(req.params.MapId)
+    
+  const removedMap = await Map.remove({_id: req.params.MapId}) 
+    res.json(removedMap);
+}catch(err){
+    res.json({message: err});
+
+}
+if (removedMap) res.json({ message: "Element supprimé" });
+
+
+});
  
 
 module.exports = router;

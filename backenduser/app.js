@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv/config');
+app.use("/uploads", express.static(process.cwd() + "/uploads"));
 
 //middlewares
 app.use(cors());
