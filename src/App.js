@@ -5,11 +5,18 @@ import './App.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Login from './components/Admin/login';
+import  DenseTable from './components/Admin/table';
+import Map from './map/MapAdmin';
+import MapA from './map/MapAvocat';
+import MapJ from './map/Mapjuge';
 
 import Register from './components/Admin/register';
 //import Dash from './components/Admin/dashboard';
 //import Landing from './components/Admin/landing';
-import MapComponent from './components/Admin/map';
+
+
+import DenseTablee from './components/Admin/DataTable';
+import FilterTableComponent from './map/Searchh'
 
 function App() {
   return (<Router>
@@ -18,19 +25,18 @@ function App() {
   <div className="container">
   <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul className="navbar-nav ml-auto">
-              <li className="nav-item">
-                <Link className="nav-link" to={"/login"}>Login</Link>
+              <li className="nav-item" >
+                <Link className="nav-link" to={"/login"}>Se connecter</Link>
         
               </li>
         <li className="nav-item">
-        <Link className="nav-link" to={"/register"}>Signup</Link>
+        <Link className="nav-link" to={"/register"}>Inscription</Link>
         </li>
         
             
-              <li className="nav-item">
-                <Link className="nav-link" to={"/Map"}>Map</Link>
-        
-              </li>
+             
+              
+              
               </ul>
           </div>
         </div>
@@ -40,7 +46,14 @@ function App() {
     <Route exact path='/' element={<Login/>} />
           <Route path="/login" element={<Login/>} />
       <Route path="/register" element={<Register/>} />
-      <Route path="/map" element={<MapComponent/>} />
+      <Route path="/QR" element={<DenseTablee/>} />
+<Route path='/search' element={<FilterTableComponent/>}/>
+      <Route path="/table" element={<DenseTable/>} />
+      <Route path="/Map" element={<Map/>}></Route>
+      <Route path="/MapA" element={<MapA/>}></Route>
+      <Route path="/MapJ" element={<MapJ/>}></Route>
+      
+
 
       </Routes>
    

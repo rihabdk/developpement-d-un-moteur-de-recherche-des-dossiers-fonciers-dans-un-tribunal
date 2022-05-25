@@ -28,3 +28,47 @@
 .App-link {
   color: #09d3ac;
 }
+.navbar-collapse {
+  float: right;
+}
+.leaflet-container {
+  height: 700px;
+  width: 100%;
+}
+.Draftcontrol{
+  background-color: yellow;;
+
+}
+.App {
+  text-align: center;
+  background-color: rgb(115, 152, 184);
+  background-image: url("../../my-app/src/assets/trib.jpg") ;
+  background-repeat: no-repeat ; 
+  background-size: cover;
+ 
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+.nav-link{
+  font-size: xx-large;
+  margin-left: 20px;
+  color: #09d3ac;
+  
+}

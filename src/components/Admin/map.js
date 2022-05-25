@@ -1,33 +1,47 @@
 import React from "react";
-import { Map, TileLayer, LayersControl} from "react-leaflet";
+import { Map, TileLayer, LayersControl, GeoJSON} from "react-leaflet";
 import "./map.css"
 import { ShapeFile } from 'react-leaflet-shapefile-v2'
 import * as yup from "yup";
 import axios from "axios";
 import { useFormik } from "formik";
 import { useState } from "react";
+import { Form } from "react-bootstrap";
 import { FieldContainer,FormError, FieldError , FormSuccess} from "./commun";
+//import scavengerHuntGeoJson from './uploads/scavenger-hunt.json';
 const { BaseLayer, Overlay } = LayersControl;
-//const validationSchema = yup.object({
- // avator: yup.string(),
-//});
-
+function importAll(r) {
+  let images = {};
+  r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
+  return images;
+}
+function onEachFeature(feature, layer) {
+  // does this feature have a property named popupContent?
+  if (feature.properties && feature.properties.popupContent) {
+   layer.bindPopup(feature.properties.popupContent);}
+}
+const images = importAll(require.context('C:/Users/Chaima/Desktop/dossiers/mapfetch/map_fetch/backuser/uploads', false, /\.(json|jpe?g|png)$/));
 class MapComponent extends React.Component {
-    state = {
+  constructor(props) {
+    super(props);
+    this.onFileChange = this.onFileChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.state = { avatar: '' };
+  }
+  state = {
     geodata: null,
     increment: 0
   }
-
-  handleFile(e) {
+  onFileChange(e) {
     var reader = new FileReader();
     var file = e.target.files[0];
     reader.readAsArrayBuffer(file);
+    this.setState({ avatar: e.target.files[0] })
     reader.onload = function(buffer) {
       this.setState({ geodata: buffer.target.result });
     }.bind(this)
   }
-  
-  onEachFeature(feature, layer) {
+ onEachFeature(feature, layer) {
     if (feature.properties) {
       layer.bindPopup(Object.keys(feature.properties).map(function(k) {
         return k + ": " + feature.properties[k];
@@ -36,82 +50,35 @@ class MapComponent extends React.Component {
       });
     }
   }
-  
   style() {
     return ({
       weight: 2,
       opacity: 1,
-      color: "blue",
+      color: "green",
       dashArray: "3",
       fillOpacity: 0.7
     });
   }
-   constructor(props) {
-    super(props);
-    this.state = { name: '' };
-  }
- 
-  handleChange = (event) => {
-    this.setState({[event.target.name]: event.target.value});
-  }
- 
-  handleSubmit = (event) => {
-    alert('the map was submitted: ');
- 
-    fetch('http://localhost:4000/maps/store', {
-        method: 'POST',
-        // We convert the React state to JSON and send it as the POST body
-        body: JSON.stringify(this.state)
-      }).then(function(response) {
-        console.log(response)
-        return response.json();
-      });
- 
-    event.preventDefault(); } 
-    render() {
+  onSubmit(e) {
+    e.preventDefault()
+    const formData = new FormData()
+    formData.append('avatar', this.state.avatar)
+    axios.post("http://localhost:4000/maps/store", formData, {
+    }).then(res => {
+        console.log(res)
+    })
+}
+render() {
     let ShapeLayers = null;
     if (this.state.geodata !== null) {
       ShapeLayers = (
       <Overlay checked name='Feature group'>
-          <ShapeFile data={this.state.geodata} style={this.style} onEachFeature={this.onEachFeature}/>
-      </Overlay>);
-
-
-
-
-//const [success, setSuccess] = useState(null);
-//const [error, setError] = useState(null);
-
-//const onSubmit = async (values) => {
-  //  const { data } = values;
-
-    //const response = await axios
-      //.post("http://localhost:4000/maps/store", data)
-      //.catch((err) => {
-        //if (err && err.response)
-        // setError(err.response.data.message);
-        //setSuccess(null);
-      //});
-
- /*  if (response && response.data) {
-     setError(null);
-     setSuccess(response.data.message);
-      formik.resetForm();
-    }
-  };
-const formik =  useFormik({initialValues:
-     { avatar: ""},
-validateOnBlur: true,
-onSubmit,
-validationSchema: validationSchema,
-});
-console.log("Error: " , error);*/
-    } 
+          <ShapeFile data={this.state.geodata} style={this.style} onEachFeature={this.onEachFeature}
+         isArrayBufer={true} />
+      </Overlay>); }
 return (
       <div>
-
-     
-      <Map  id="mapId" center={[36.81897, 10.16579]} zoom={14} zoomControl={true}>
+     <Map id="mapId" center={[37.274612,  9.862724]} zoom={14} zoomControl={true}>
       <LayersControl position='topright'>
             <BaseLayer checked name='OpenStreetMap.Mapnik'>
         <TileLayer
@@ -121,23 +88,29 @@ return (
          </BaseLayer>
             {ShapeLayers}
           </LayersControl>
-       
-
-      </Map>
-      <div >
-        <label>
-          <input type="file" onChange={this.handleFile.bind(this)}  name="inputfile"/>
-          <button onClick={this.handleSubmit}>Upload</button>
-
-          </label>
-       
-        </div>
-      
-      </div>
-
-
-
-    );
+<div>
+         <GeoJSON data={images['place1.json']} onEachFeature={onEachFeature}/>
+        <GeoJSON data={images['place2.json']} onEachFeature={onEachFeature}/>
+        <GeoJSON data={images['place3.json']} onEachFeature={onEachFeature}/>
+        <GeoJSON data={images['place4.json']} onEachFeature={onEachFeature}/>
+        <GeoJSON data={images['place5.json']} onEachFeature={onEachFeature}/>
+</div>
+</Map>
+<div className="auth-wrapper">
+   <div className="auth-inner">
+<Form onSubmit={this.onSubmit}>
+       <FieldContainer>
+       <div className="form-group">
+           <input name="avatar" type="file" className="form-control" 
+            onChange={this.onFileChange} />
+       </div>
+       </FieldContainer>
+       <button type="submit"  className="btn btn-primary btn-block">upload</button>
+     </Form>
+   </div>
+   </div>
+   </div>
+);
   }
 }
 
